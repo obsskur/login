@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Troll Password Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+  <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-4">Create a Password</h1>
+    <p class="text-sm text-gray-500 mb-4 text-center">Follow the rules... if you can 😈</p>
+    
+    <input type="text" id="password" placeholder="Enter password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 mb-4" />
+    
+    <ul id="rules" class="text-sm text-gray-700 space-y-2 mb-4">
+      <li id="rule1">✅ Must be at least 5 characters</li>
+    </ul>
+
+    <div id="finalMessage" class="text-center text-lg font-semibold mt-4 text-red-500 hidden">
+      You call that a password? Try again, genius 😎
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById("password");
+    const rules = document.getElementById("rules");
+    const finalMessage = document.getElementById("finalMessage");
+
+    let ruleLevel = 1;
+
+    input.addEventListener("input", () => {
+      const val = input.value;
+
+      // Rule 1: Must be at least 5 characters
+      if (val.length >= 5 && ruleLevel === 1) {
+        document.getElementById("rule1").textContent = "✅ Must be at least 5 characters";
+        ruleLevel = 2;
+        const li = document.createElement("li");
+        li.id = "rule2";
+        li.textContent = "❌ Must include a number";
+        rules.appendChild(li);
+      }
+
+      // Rule 2: Must include a number
+      if (ruleLevel >= 2) {
+        const hasNumber = /\d/.test(val);
+        document.getElementById("rule2").textContent = hasNumber ? "✅ Must include a number" : "❌ Must include a number";
+        if (hasNumber && ruleLevel === 2) {
+          ruleLevel = 3;
+          const li = document.createElement("li");
+          li.id = "rule3";
+          li.textContent = "❌ Must include a capital letter";
+          rules.appendChild(li);
+        }
+      }
+
+      // Rule 3: Must include capital letter
+      if (ruleLevel >= 3) {
+        const hasUpper = /[A-Z]/.test(val);
+        document.getElementById("rule3").textContent = hasUpper ? "✅ Must include a capital letter" : "❌ Must include a capital letter";
+        if (hasUpper && ruleLevel === 3) {
+          ruleLevel = 4;
+          const li = document.createElement("li");
+          li.id = "rule4";
+          li.textContent = "❌ Must include the name of a Pokémon";
+          rules.appendChild(li);
+        }
+      }
+
+      // Rule 4: Must include a Pokémon name (basic troll)
+      if (ruleLevel >= 4) {
+        const pokemonList = ["pikachu", "charmander", "bulbasaur", "squirtle"];
+        const hasPokemon = pokemonList.some(p => val.toLowerCase().includes(p));
+        document.getElementById("rule4").textContent = hasPokemon ? "✅ Must include the name of a Pokémon" : "❌ Must include the name of a Pokémon";
+        if (hasPokemon && ruleLevel === 4) {
+          ruleLevel = 5;
+          const li = document.createElement("li");
+          li.id = "rule5";
+          li.textContent = "❌ Password must be exactly 7 characters long";
+          rules.appendChild(li);
+        }
+      }
+
+      // Rule 5: Exactly 7 characters
+      if (ruleLevel >= 5) {
+        const exactLength = val.length === 7;
+        document.getElementById("rule5").textContent = exactLength ? "✅ Password must be exactly 7 characters long" : "❌ Password must be exactly 7 characters long";
+
+        if (exactLength && ruleLevel === 5) {
+          ruleLevel = 6;
+          const li = document.createElement("li");
+          li.id = "rule6";
+          li.textContent = "❌ Password cannot contain any letter 'e'";
+          rules.appendChild(li);
+        }
+      }
+
+      // Rule 6: No 'e'
+      if (ruleLevel >= 6) {
+        const hasE = /e/i.test(val);
+        document.getElementById("rule6").textContent = hasE ? "❌ Password cannot contain any letter 'e'" : "✅ Password cannot contain any letter 'e'";
+
+        if (!hasE && ruleLevel === 6) {
+          finalMessage.classList.remove("hidden");
+          finalMessage.textContent = "Congratulations. You're insane. 😵";
+          ruleLevel = 999; // lock
+        }
+      }
+    });
+  </script>
+</body>
+</html>
